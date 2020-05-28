@@ -11,13 +11,7 @@
 // Execute `rustlings hint iterators4` for hints.
 
 pub fn factorial(num: u64) -> u64 {
-    let mut total:u64 = 1;
-
-    for n in 2..num+1 {
-        total *= n;
-    }
-
-    total
+    (2..num + 1).fold(1, |acc, n| acc * n)
 }
 
 #[cfg(test)]
