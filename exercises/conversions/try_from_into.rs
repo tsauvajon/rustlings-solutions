@@ -21,26 +21,33 @@ struct Color {
 // but slice implementation need check slice length!
 // Also note, that chunk of correct rgb color must be integer in range 0..=255.
 
+fn tryToU8(i: i16) -> Result<u8, String> {
+    match u8::try_from(i) {
+        Err(_) => Err(String::from("out of bounds")),
+        Ok(u) => Ok(u),
+    }
+}
+
 // Tuple implementation
 impl TryFrom<(i16, i16, i16)> for Color {
-    type Error = std::num::TryFromIntError;
+    type Error = String;
     fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
         Ok(Color {
-            red: u8::try_from(tuple.0)?,
-            green: u8::try_from(tuple.1)?,
-            blue: u8::try_from(tuple.2)?,
+            red: tryToU8(tuple.0)?,
+            green: tryToU8(tuple.1)?,
+            blue: tryToU8(tuple.2)?,
         })
     }
 }
 
 // Array implementation
 impl TryFrom<[i16; 3]> for Color {
-    type Error = std::num::TryFromIntError;
+    type Error = String;
     fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
         Ok(Color {
-            red: u8::try_from(arr[0])?,
-            green: u8::try_from(arr[1])?,
-            blue: u8::try_from(arr[2])?,
+            red: tryToU8(arr[0])?,
+            green: tryToU8(arr[1])?,
+            blue: tryToU8(arr[2])?,
         })
     }
 }
@@ -51,9 +58,9 @@ impl TryFrom<&[i16]> for Color {
     fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
         if slice.len() == 3 {
             Ok(Color {
-                red: u8::try_from(slice[0]).expect("out of bounds"),
-                green: u8::try_from(slice[1]).expect("out of bounds"),
-                blue: u8::try_from(slice[2]).expect("out of bounds"),
+                red: tryToU8(slice[0])?,
+                green: tryToU8(slice[1])?,
+                blue: tryToU8(slice[2])?,
             })
         } else {
             Err(String::from("exceeded length"))
